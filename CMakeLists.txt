@@ -144,6 +144,15 @@ set(pahole_SRCS pahole.c)
 add_executable(pahole ${pahole_SRCS})
 target_link_libraries(pahole dwarves dwarves_emit dwarves_reorganize)
 
+add_custom_command(
+    OUTPUT wpahole
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:pahole> ${CMAKE_CURRENT_BINARY_DIR}/wpahole
+    DEPENDS pahole
+    COMMENT "Copying pahole to wpahole"
+)
+
+add_custom_target(wpahole_target ALL DEPENDS wpahole)
+
 set(pdwtags_SRCS pdwtags.c)
 add_executable(pdwtags ${pdwtags_SRCS})
 target_link_libraries(pdwtags dwarves)
@@ -171,6 +180,7 @@ target_link_libraries(syscse dwarves)
 install(TARGETS codiff ctracer dtagnames pahole pdwtags
 		pfunct pglobal prefcnt scncopy syscse RUNTIME DESTINATION
 		${CMAKE_INSTALL_PREFIX}/bin)
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/wpahole DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)		
 install(TARGETS dwarves LIBRARY DESTINATION ${LIB_INSTALL_DIR} ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
 install(TARGETS dwarves dwarves_emit dwarves_reorganize LIBRARY DESTINATION ${LIB_INSTALL_DIR} ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
 install(FILES dwarves.h dwarves_emit.h dwarves_reorganize.h
